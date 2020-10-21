@@ -2,6 +2,7 @@ package easysurvey.persistence;
 
 import easysurvey.dataModel.*;
 
+import easysurvey.dataModel.Statistics.QuestionStat;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -211,6 +212,14 @@ public class SurveyService {
 
         String sql = "SELECT COUNT(*) AS c1 FROM (SELECT questionanswers.question_id, questionanswers.question_answer_id, questionanswers.survey_id, metricanswers.metric_answer_id, questionanswers.interwivee_id FROM questionanswers INNER JOIN metricanswers ON questionanswers.interwivee_id=metricanswers.interwivee_id WHERE metricanswers.metric_answer_id='" + metricId + "' AND questionanswers.question_id='" + questionId + "' AND questionanswers.question_answer_id='" + questionAnswerId + "' AND questionanswers.survey_id='" + surveyId + "') AS deliveredTable";
         //String sql = "SELECT COUNT(*) AS c1 FROM metricanswers WHERE metricanswers.metric_answer_id='"+ metricId +"'";
+        Query query = session.createSQLQuery(sql);
+        BigInteger interCount = (BigInteger) query.uniqueResult();
+        return interCount;
+
+    }
+
+    public BigInteger takeMetric_id(long metricId) {
+        String sql = "SELECT metric_id FROM potentialmetricanswer WHERE potentialmetricanswer.id='" + metricId + "'";
         Query query = session.createSQLQuery(sql);
         BigInteger interCount = (BigInteger) query.uniqueResult();
         return interCount;

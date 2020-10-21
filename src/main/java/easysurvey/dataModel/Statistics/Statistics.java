@@ -7,6 +7,7 @@ import easysurvey.persistence.SurveyService;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Statistics {
 
@@ -70,6 +71,7 @@ public class Statistics {
         this.surveyDescription = survey.getDescription();
         long countInterviewee = surveyService.countInterviewee(surveyId).longValue();
         this.numberOfAnswers = countInterviewee;
+        HashSet<Long> metrics_id = new HashSet<>();
 
 
         //System.out.println("xxxxxx" + metricId);
@@ -88,25 +90,34 @@ public class Statistics {
 
                 long howManyAnswers = 0;
                 for (Long metricId : metricsIds) {
-                    System.out.println("    metricID: " +  metricId + " .Answers qty: " + howManyAnswers);
+                    metrics_id.add(surveyService.takeMetric_id(metricId).longValue());
                     howManyAnswers = surveyService.statAnswersWithFilter(question.getId(), potentialQuestionAnswer.getId(), metricId, surveyId).longValue() + howManyAnswers;
-
+                    System.out.println("    metricID: " +  metricId + " .Answers qty: " + howManyAnswers);
                 }
-
+                //howManyMetricsAnswers = howManyMetricsAnswers + howManyAnswers;
                 //double prc = (double) howManyAnswers / howManyMetricsAnswers;
                 //answerStat.setAnswerPercentage(round(prc, 1));
 
-                double checkIfOne = (double) howManyAnswers / survey.getMetrics().size();
-                if(checkIfOne == 0.5){
-                    answerStat.setNumberOfAnswers(1);
-                    howManyMetricsAnswers = howManyMetricsAnswers + howManyAnswers;
-                } else {
-                    answerStat.setNumberOfAnswers(howManyAnswers / survey.getMetrics().size());
-                    howManyMetricsAnswers = howManyMetricsAnswers + howManyAnswers / survey.getMetrics().size();
-                }
-                
+//                double checkIfOne = (double) howManyAnswers / survey.getMetrics().size();
+//                if(checkIfOne == 0.5){
+//                    answerStat.setNumberOfAnswers(1);
+//
+//                } else {
+//                    answerStat.setNumberOfAnswers(howManyAnswers / survey.getMetrics().size());
+//                    howManyMetricsAnswers = howManyMetricsAnswers + howManyAnswers / survey.getMetrics().size();
+//                }
 
-                System.out.println("pot quest: " + potentialQuestionAnswer.getText()  + " .devide by qty od metrics: "+ (double) howManyAnswers / survey.getMetrics().size() + " .how many answers: " + howManyAnswers);
+
+                if(metrics_id.size() > 1){
+                    answerStat.setNumberOfAnswers(howManyAnswers / metrics_id.size());
+                    howManyMetricsAnswers = howManyMetricsAnswers + howManyAnswers / metrics_id.size();
+
+                } else {
+                    answerStat.setNumberOfAnswers(howManyAnswers);
+                    howManyMetricsAnswers = howManyMetricsAnswers + howManyAnswers;
+                }
+
+                System.out.println("pot quest: " + potentialQuestionAnswer.getText()  + " .how many answers: " + howManyAnswers);
                 questionStat.setAnswerStats(answerStat);
 
             }
@@ -119,8 +130,15 @@ public class Statistics {
 //                questionStat.setNumberOfMetricAnswers(howManyMetricsAnswers / survey.getMetrics().size());
 //            }
 
+//            if(metrics_id.size() > 1){
+//                questionStat.setNumberOfMetricAnswers(howManyMetricsAnswers / metrics_id.size());
+//            } else {
+//                questionStat.setNumberOfMetricAnswers(howManyMetricsAnswers);
+//            }
+
             questionStat.setNumberOfMetricAnswers(howManyMetricsAnswers);
             System.out.println("how many metric answers: " + questionStat.getNumberOfMetricAnswers());
+            System.out.println(metrics_id);
 
         }
 
