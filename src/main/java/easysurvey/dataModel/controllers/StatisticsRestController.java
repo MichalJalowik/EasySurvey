@@ -70,16 +70,16 @@ public class StatisticsRestController {
 //        return new ResponseEntity<Long>(result, HttpStatus.OK);
 //    }
 
-    @RequestMapping(value = "/{surveyid}", method = RequestMethod.GET)
-    public ResponseEntity<?> getSurvey(@PathVariable("surveyid") long surveyID) {
-        Survey survey = surveyService.getSurvey(surveyID);
-        Statistics statistics = new Statistics(survey);
-        statistics.getStats();
-        if (survey == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Statistics>(statistics, HttpStatus.OK);
-    }
+//    @RequestMapping(value = "/{surveyid}", method = RequestMethod.GET)
+//    public ResponseEntity<?> getSurvey(@PathVariable("surveyid") long surveyID) {
+//        Survey survey = surveyService.getSurvey(surveyID);
+//        Statistics statistics = new Statistics(survey);
+//        statistics.getStats();
+//        if (survey == null) {
+//            return new ResponseEntity(HttpStatus.NOT_FOUND);
+//        }
+//        return new ResponseEntity<Statistics>(statistics, HttpStatus.OK);
+//    }
 
     ArrayList<Long> chosenMetrics = new ArrayList<Long>();
     @RequestMapping(value = "/{surveyId}/metrics", method = RequestMethod.POST)

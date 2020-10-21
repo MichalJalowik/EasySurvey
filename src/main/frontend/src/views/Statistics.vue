@@ -3,6 +3,7 @@
         <br>
 
         <h4>Total number of voters: <b>{{statistic.numberOfAnswers}}</b></h4>
+        <p1>{{this.chosenMetrics}}</p1>
 
         <div class="surveyCreatorComponent">
             <p class="mainNames">Metric filter</p>

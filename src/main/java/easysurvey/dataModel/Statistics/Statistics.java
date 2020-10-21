@@ -31,37 +31,37 @@ public class Statistics {
         return questionStats;
     }
 
-    public void getStats() {
-
-        surveyService.setSurvey(survey);
-        this.surveyId = survey.getId();
-        this.surveyDescription = survey.getDescription();
-        long countInterviewee = surveyService.countInterviewee(surveyId).longValue();
-        this.numberOfAnswers = countInterviewee;
-
-
-        for (Question question : survey.getQuestions()) {
-            QuestionStat questionStat = new QuestionStat();
-            questionStat.setQuestionId(question.getId());
-            questionStat.setQuestionText(question.getQuestionText());
-            questionStats.add(questionStat);
-
-            for (PotentialQuestionAnswer potentialQuestionAnswer : question.getPotentialQuestionAnswers()) {
-                AnswerStat answerStat = new AnswerStat();
-                answerStat.setPotentialQuestionAnswer(potentialQuestionAnswer);
-
-                long howManyAnswers = surveyService.statAnswers(question.getId(), potentialQuestionAnswer.getId());
-                double prc = (double) howManyAnswers / countInterviewee * 100;
-                answerStat.setAnswerPercentage(round(prc, 1));
-
-                answerStat.setNumberOfAnswers(howManyAnswers);
-                questionStat.setAnswerStats(answerStat);
-            }
-
-        }
-
-
-    }
+//    public void getStats() {
+//
+//        surveyService.setSurvey(survey);
+//        this.surveyId = survey.getId();
+//        this.surveyDescription = survey.getDescription();
+//        long countInterviewee = surveyService.countInterviewee(surveyId).longValue();
+//        this.numberOfAnswers = countInterviewee;
+//
+//
+//        for (Question question : survey.getQuestions()) {
+//            QuestionStat questionStat = new QuestionStat();
+//            questionStat.setQuestionId(question.getId());
+//            questionStat.setQuestionText(question.getQuestionText());
+//            questionStats.add(questionStat);
+//
+//            for (PotentialQuestionAnswer potentialQuestionAnswer : question.getPotentialQuestionAnswers()) {
+//                AnswerStat answerStat = new AnswerStat();
+//                answerStat.setPotentialQuestionAnswer(potentialQuestionAnswer);
+//
+//                long howManyAnswers = surveyService.statAnswers(question.getId(), potentialQuestionAnswer.getId());
+//                double prc = (double) howManyAnswers / countInterviewee * 100;
+//                answerStat.setAnswerPercentage(round(prc, 1));
+//
+//                answerStat.setNumberOfAnswers(howManyAnswers);
+//                questionStat.setAnswerStats(answerStat);
+//            }
+//
+//        }
+//
+//
+//    }
 
     public void getStatsWithFilter() {
 
@@ -88,20 +88,39 @@ public class Statistics {
 
                 long howManyAnswers = 0;
                 for (Long metricId : metricsIds) {
+                    System.out.println("    metricID: " +  metricId + " .Answers qty: " + howManyAnswers);
                     howManyAnswers = surveyService.statAnswersWithFilter(question.getId(), potentialQuestionAnswer.getId(), metricId, surveyId).longValue() + howManyAnswers;
+
                 }
-                howManyMetricsAnswers = howManyMetricsAnswers + howManyAnswers;
 
+                //double prc = (double) howManyAnswers / howManyMetricsAnswers;
+                //answerStat.setAnswerPercentage(round(prc, 1));
 
-                double prc = (double) howManyAnswers / howManyMetricsAnswers;
-                answerStat.setAnswerPercentage(round(prc, 1));
+                double checkIfOne = (double) howManyAnswers / survey.getMetrics().size();
+                if(checkIfOne == 0.5){
+                    answerStat.setNumberOfAnswers(1);
+                    howManyMetricsAnswers = howManyMetricsAnswers + howManyAnswers;
+                } else {
+                    answerStat.setNumberOfAnswers(howManyAnswers / survey.getMetrics().size());
+                    howManyMetricsAnswers = howManyMetricsAnswers + howManyAnswers / survey.getMetrics().size();
+                }
+                
 
-                answerStat.setNumberOfAnswers(howManyAnswers);
+                System.out.println("pot quest: " + potentialQuestionAnswer.getText()  + " .devide by qty od metrics: "+ (double) howManyAnswers / survey.getMetrics().size() + " .how many answers: " + howManyAnswers);
                 questionStat.setAnswerStats(answerStat);
 
             }
+
+
+//            double checkIfOne = (double) howManyMetricsAnswers / survey.getMetrics().size();
+//            if(checkIfOne == 1){
+//                questionStat.setNumberOfMetricAnswers(howManyMetricsAnswers);
+//            } else {
+//                questionStat.setNumberOfMetricAnswers(howManyMetricsAnswers / survey.getMetrics().size());
+//            }
+
             questionStat.setNumberOfMetricAnswers(howManyMetricsAnswers);
-            System.out.println(questionStat.getNumberOfMetricAnswers());
+            System.out.println("how many metric answers: " + questionStat.getNumberOfMetricAnswers());
 
         }
 
@@ -124,13 +143,13 @@ public class Statistics {
         return numberOfAnswers;
     }
 
-    public double round(double value, int places) {
+    public long round(long value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
         long factor = (long) Math.pow(10, places);
         value = value * factor;
         long tmp = Math.round(value);
-        return (double) tmp / factor;
+        return (long) tmp / factor;
     }
 
 }
