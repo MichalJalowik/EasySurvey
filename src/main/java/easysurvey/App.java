@@ -1,5 +1,6 @@
 package easysurvey;
 
+import easysurvey.config.FaviconConfiguration;
 import easysurvey.persistence.SurveyService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,7 +22,7 @@ public class App {
 		surveyService.close();
 		SpringApplication.run(App.class, args);
 	}
-
+	
 
 }
 
