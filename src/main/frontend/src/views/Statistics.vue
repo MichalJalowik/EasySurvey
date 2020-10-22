@@ -71,37 +71,35 @@
 
         data() {
             return {
-                // statistic: {
-                //     questionAnswers: [], metricAnswers: [], questions: [], metrics: [], description: ""
-                // },
                 statistic: "",
                 chosenMetrics: [],
                 response: [],
-                dupa: [],
-                // questionId: "1",
-                // questionAnswerId: "2",
-                // prcResult: ""
             }
         },
 
         created() {
+
+        },
+
+        mounted() {
             //this.loadTest();
-            //this.fill()
+            this.pageStart();
+
+        },
+
+        computed() {
+            
         },
 
         watch: {
             surveyId: function () {
-                //this.loadStat();
                 this.empty();
                 this.loadTest();
-                //this.fill();
             },
 
             chosenMetrics: function () {
-                //this.test()
                 this.loadStat();
             }
-
         },
 
         methods: {
@@ -115,28 +113,29 @@
             //         });
             // },
 
-            // loadStat() {
-            //     this.warning("loading...")
-            //     this.$http.get('statistics/' + this.surveyId)
-            //         .then(response => {
-            //             this.statistic = response.body;
-            //             this.success("Successfuly loaded survey no. " + this.statistic.surveyId + ": " + this.statistic.surveyDescription);
-            //         })
-            //         .catch(response => {
-            //             this.failure('Error ' + response.status + ' while loading the survey statistics. No such survey ID.');
-            //         })
-            // },
-
+            
             loadTest() {
-                //
+
                 this.warning("loading...");
-                //this.fill();
-                //this.$http.post('statistics/' + this.surveyId + '/metrics', this.chosenMetrics).then(response => this.response = response.body);
                 this.$http.post('statistics/' + this.surveyId + '/metrics', this.chosenMetrics).then(response => {
                     this.statistic = response.body;
                     this.success("Successfully loaded survey no. " + this.statistic.surveyId + ": " + this.statistic.surveyDescription);
                     this.fill();
-                    this.loadStat()
+                    //this.loadStat()
+                })
+                    .catch(response => {
+                        this.failure('Error ' + response.status + ' while loading the survey statistics. No such survey ID.');
+                    })
+            },
+
+            pageStart() {
+
+                this.warning("loading...");
+                this.$http.get('statistics/' + this.surveyId).then(response => {
+                    this.statistic = response.body;
+                    this.success("Successfully loaded survey no. " + this.statistic.surveyId + ": " + this.statistic.surveyDescription);
+                    this.fill();
+                    //this.loadStat()
                 })
                     .catch(response => {
                         this.failure('Error ' + response.status + ' while loading the survey statistics. No such survey ID.');
@@ -144,7 +143,6 @@
             },
 
             loadStat() {
-
                 this.warning("LOADING ...");
                 this.$http.post('statistics/' + this.surveyId + '/metrics', this.chosenMetrics).then(response => {
                     this.statistic = response.body;
@@ -153,42 +151,20 @@
                     .catch(response => {
                         this.failure('Error ' + response.status + ' while loading the survey statistics. No such survey ID.');
                     })
-
             },
 
             fill() {
-                //this.text = this.metrics.metricsStats[0].metricAnswerStats[0].potentialMetricsAnswer.id
                 for (var i in this.statistic.survey.metrics) {
                     for (var j in this.statistic.survey.metrics[i].potentialMetricAnswers) {
                         this.chosenMetrics.push(this.statistic.survey.metrics[i].potentialMetricAnswers[j].id);
                     }
                 }
-
             },
 
             empty() {
               this.chosenMetrics = [];
             },
-
-            test() {
-                this.dupa += 1
-            },
-
-            // getStat2(Qid, QAid) {
-            //     this.$http.get('statistics/' + Qid + '/' + QAid)
-            //         .then(response => {
-            //             this.prcResult = response.body;
-            //         });
-            // },
-
-            // onePrc: function (Qid, QAid) {
-            //     this.$http.get('statistics/' + Qid + '/' + QAid)
-            //         .then(response => {
-            //             this.prcResult = response.body;
-            //         });
-            // },
-
-
+            
             success(message) {
                 this.$emit("success", message);
             },
@@ -200,22 +176,7 @@
             warning(message) {
                 this.$emit("warning", message);
             },
-
         },
-
-        mounted() {
-            //this.fill();
-            this.loadTest()
-
-        },
-
-        computed() {
-            this.fill();
-
-
-        },
-
-
     };
 </script>
 
