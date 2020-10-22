@@ -22,7 +22,7 @@ public class App {
 		surveyService.close();
 		SpringApplication.run(App.class, args);
 	}
-	
+
 
 }
 
